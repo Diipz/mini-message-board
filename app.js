@@ -1,9 +1,29 @@
 const express = require("express")
 const path = require("path");
-const createError = require('http-errors');
+const createError = require("http-errors");
+const mongoose = require("mongoose");
+
+//read .env file and make variables available in process.env object
+require('dotenv').config();
+
 
 //setup server
 const app = express();
+
+
+//connect to mongoDB 
+const uri = process.env.MONGODB_URI
+
+async function connect() {
+  try {
+    await mongoose.connect(uri);
+    console.log("connected")
+  } catch (error) {
+    console.error("error")
+  }
+}
+
+connect();
 
 //declare viariables to access each route
 const indexRouter = require("./routes/index");
@@ -48,6 +68,6 @@ app.use(function(err, req, res, next) {
     res.render('error');
   });
 
-
+app.listen(8080)
 
 module.exports = app;
