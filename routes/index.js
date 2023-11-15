@@ -1,25 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require("mongoose");
+const Post = require("../schema/post");
+const { db } = require("../db");
+
+
 
 /* create inital message array */
-const messages = [
-  {
-    text: "I like you",
-    user: "Chan",
-    added: new Date()
-  },
-  {
-    text: "Hi, cun I av ure cv? ",
-    user: "Gav",
-    added: new Date()
-  },
-  {
-    text: "Hi",
-    user: "Chan",
-    added: new Date()
-  }
-];
+const messages = [];
 
+console.log(db);
 
 /* GET home page. */
 router.get("/", (req, res) => {
@@ -32,7 +22,20 @@ router.post("/new", (req, res) => {
   const message = req.body.messageText;
   messages.unshift({ text: message, user: userName, added: new Date() });
   res.redirect("/");
+
+  saveMessage(message, userName);
 });
+
+
+//save into MongoDB
+async function saveMessage(text, name) {
+  const post = new Post({
+    text: text,
+    name: name,
+    date: new Date()
+   })
+  await post.save()
+}
 
 
 module.exports = router;
