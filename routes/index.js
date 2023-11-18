@@ -20,18 +20,19 @@ router.get("/", async (req, res) => {
 /* GET message details from form, create document using details, save to Mongodb then redirect to index page */
 router.post("/new", async (req, res) => {
   
+  const message = new messageModel({
+    text: req.body.messageText,
+    user: req.body.messageUser,
+    added: new Date()
+  });
+
   try {
-    const message = new messageModel({
-      text: req.body.messageText,
-      user: req.body.messageUser,
-      added: new Date()
-    });
-  
-    message.save();
+    await message.save();
+    res.status(201).send({ message })
     res.redirect("/");
   } 
   catch(err) {
-    res.status(500).send(err.message)
+    res.status(400).send(err.message)
   }
 });
 
