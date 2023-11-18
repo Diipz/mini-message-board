@@ -12,7 +12,7 @@ const app = express();
 
 
 //connect to mongoDB 
-const uri = `mongodb+srv://${process.env.UN}:${process.env.PASS}@nodecluster.uhucgkh.mongodb.net/?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${process.env.UN}:${process.env.PASS}@nodecluster.uhucgkh.mongodb.net/messages?retryWrites=true&w=majority`
 
 //define async function to activate mongoose
 const start = async() => {
@@ -22,7 +22,8 @@ const start = async() => {
     app.listen(8080, () => {
       console.log("App listening on port 8080");
     });
-  } catch(err) {
+  } 
+  catch(err) {
     console.log(err.message)
   }
 }

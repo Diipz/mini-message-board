@@ -1,29 +1,38 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require("mongoose");
 const messageModel = require("../models/message");
 
-/* create inital message array */
-const messages = [];
 
-const message = new messageModel({
-  text: "Hi",
-  user: "Chan",
-  added: new Date()
+
+/* GET home page and copying documents from database */
+router.get("/", async (req, res) => {
+  try {
+    //find all documents from messageModel and sort in reverse order
+    const result = await messageModel.find().sort({ "added": -1 });
+    res.render("index", { title: "Mini Messageboard", messages: result });
+  } 
+  catch(err) {
+    res.status(500).send(err.message);
+  }
 });
 
-messages.unshift(message);
-
-/* GET home page. */
-router.get("/", (req, res) => {
-  res.render("index", { title: "Mini Messageboard", messages: messages });
-});
-
-/* GET message from form then add to "messages" array then redirect to index page */
-router.post("/new", (req, res) => {
-  const userName = req.body.messageUser;
-  const message = req.body.messageText;
-  messages.unshift({ text: message, user: userName, added: new Date() });
-  res.redirect("/");
+/* GET message details from form, create document using details, save to Mongodb then redirect to index page */
+router.post("/new", async (req, res) => {
+  
+  try {
+    const message = new messageModel({
+      text: req.body.messageText,
+      user: req.body.messageUser,
+      added: new Date()
+    });
+  
+    message.save();
+    res.redirect("/");
+  } 
+  catch(err) {
+    res.status(500).send(err.message)
+  }
 });
 
 
