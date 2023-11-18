@@ -2,7 +2,7 @@ const express = require("express")
 const path = require("path");
 const createError = require("http-errors");
 const mongoose = require("mongoose");
-
+const messageModel = require("./models/message");
 
 //read .env file and make variables available in process.env object
 require('dotenv').config();
@@ -11,14 +11,29 @@ require('dotenv').config();
 const app = express();
 
 
+//connect to mongoDB 
+const uri = `mongodb+srv://${process.env.UN}:${process.env.PASS}@nodecluster.uhucgkh.mongodb.net/?retryWrites=true&w=majority`
 
+//define async function to activate mongoose
+const start = async() => {
+  try {
+    await mongoose.connect(uri);
+
+    app.listen(8080, () => {
+      console.log("App listening on port 8080");
+    });
+  } catch(err) {
+    console.log(err.message)
+  }
+}
+
+start();
 
 
 
 //declare viariables to access each route
 const indexRouter = require("./routes/index");
 const newMessageRouter = require("./routes/new-message");
-
 
 
 //"app.use" loads a function to be used as middleware
@@ -60,4 +75,6 @@ app.use(function(err, req, res, next) {
   });
 
 
-module.exports = { app, db };
+
+
+module.exports = app;
